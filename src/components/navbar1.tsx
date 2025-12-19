@@ -55,7 +55,7 @@ interface Navbar1Props {
 
 const Navbar1 = ({
   logo = {
-    url: "",
+    url: "/",
     alt: "logo",
     title: "Daarsi",
   },
@@ -63,13 +63,13 @@ const Navbar1 = ({
     { title: "Home", url: "#" },
     {
       title: "Learn",
-      url: "#",
+      url: "/cours",
       items: [
         {
           title: "Courses",
           description: "The latest industry news, updates, and info",
           icon: <Book className="size-5 shrink-0" />,
-          url: "#",
+          url: "/courses",
         },
         {
           title: "Quizzes",
@@ -89,12 +89,6 @@ const Navbar1 = ({
       title: "Resources",
       url: "#",
       items: [
-        {
-          title: "Help Center",
-          description: "Get all the answers you need right here",
-          icon: <Zap className="size-5 shrink-0" />,
-          url: "#",
-        },
         {
           title: "Contact Us",
           description: "We are here to help you with any questions you have",
@@ -141,7 +135,7 @@ const Navbar1 = ({
               </NavigationMenu>
             </div>
           </div>
-          <div>
+          <div className="pl-6">
             <ModeToggle/>
           </div>
           <div className="pl-2 flex gap-2">
