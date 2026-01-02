@@ -1,8 +1,10 @@
 "use client";
 
 import { useNavigate } from "react-router-dom";
-import { Book, Menu, Sunset, Trees } from "lucide-react";
+import { Book, Menu, Sunset, Trees, LogOut } from "lucide-react";
 import { ModeToggle } from "@/components/mode-toggle";
+import { getToken } from "@/lib/api";
+import { useState, useEffect } from "react";
 
 import {
   Accordion,
@@ -74,7 +76,7 @@ export function Navbar1({
           title: "Quizzes",
           description: "Test your knowledge interactively",
           icon: <Trees className="size-5 shrink-0" />,
-          url: "#",
+          url: "/quizzes",
         },
         {
           title: "Tutorials",
@@ -115,6 +117,17 @@ export function Navbar1({
   },
 }: Navbar1Props) {
   const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setIsLoggedIn(!!getToken());
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    navigate("/");
+  };
 
   // --- Helper Components (Moved inside to access 'navigate') ---
 
@@ -229,12 +242,26 @@ export function Navbar1({
           <div className="flex items-center gap-4">
             <ModeToggle />
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={() => navigate(auth.login.url)}>
-                {auth.login.title}
-              </Button>
-              <Button size="sm" onClick={() => navigate(auth.signup.url)}>
-                {auth.signup.title}
-              </Button>
+              {isLoggedIn ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleLogout}
+                  className="flex items-center gap-2"
+                >
+                  <LogOut className="size-4" />
+                  Se déconnecter
+                </Button>
+              ) : (
+                <>
+                  <Button variant="outline" size="sm" onClick={() => navigate(auth.login.url)}>
+                    {auth.login.title}
+                  </Button>
+                  <Button size="sm" onClick={() => navigate(auth.signup.url)}>
+                    {auth.signup.title}
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </nav>
@@ -266,12 +293,25 @@ export function Navbar1({
                   </Accordion>
 
                   <div className="flex flex-col gap-3">
-                    <Button variant="outline" onClick={() => navigate(auth.login.url)}>
-                      {auth.login.title}
-                    </Button>
-                    <Button onClick={() => navigate(auth.signup.url)}>
-                      {auth.signup.title}
-                    </Button>
+                    {isLoggedIn ? (
+                      <Button
+                        variant="outline"
+                        onClick={handleLogout}
+                        className="flex items-center gap-2 justify-center"
+                      >
+                        <LogOut className="size-4" />
+                        Se déconnecter
+                      </Button>
+                    ) : (
+                      <>
+                        <Button variant="outline" onClick={() => navigate(auth.login.url)}>
+                          {auth.login.title}
+                        </Button>
+                        <Button onClick={() => navigate(auth.signup.url)}>
+                          {auth.signup.title}
+                        </Button>
+                      </>
+                    )}
                   </div>
                 </div>
               </SheetContent>

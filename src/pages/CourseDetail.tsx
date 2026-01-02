@@ -13,10 +13,11 @@ export default function CourseDetail() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    api<any>(`/api/courses/${id}`)
+    api<any>(`/courses/${id}`)
       .then((res : any) => {
-        setCourse(res.course);
-        setLessons(res.lessons);
+        setCourse(res);
+        // Use lessons if available, otherwise fall back to chapters
+        setLessons(res.lessons || res.chapters || []);
       })
       .catch((e : any) => setError(e.message));
   }, [id]);
@@ -26,10 +27,10 @@ export default function CourseDetail() {
     setMessage("");
 
     try {
-      const res = await api<any>(`/api/courses/${id}/enroll`, {
-        method: "POST",
+      const res = await api<any>(`/subscribe/${id}`, {
+        method: "GET",
       });
-      setMessage(res.message);
+      setMessage("Inscription réussie!");
     } catch (e: any) {
       setError(e.message);
     }

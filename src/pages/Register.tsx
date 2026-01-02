@@ -2,39 +2,51 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { api } from "@/lib/api";
 import { saveAuth, type Role } from "@/lib/auth";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+
 export default function Register() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
   const [role, setRole] = useState<Role>("student");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
-  const [error, setError] = useState("");
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    setError("");
 
     if (password !== confirm) {
-      setError("Les mots de passe ne correspondent pas");
+      toast.error("Les mots de passe ne correspondent pas");
       return;
     }
 
     try {
-      const res = await api<{ token: string; user: any }>("/api/register", {
+      const res = await api<{ token: string; user: any }>("/register", {
         method: "POST",
         body: JSON.stringify({
-          name: name || undefined,
-          email,
-          password,
-          role,
+          username: name,
+          password: password,
+          role: role,
         }),
       });
 
+      console.log(res)
+
       saveAuth(res.token, res.user);
+      toast.success("Compte créé avec succès!");
       navigate(res.user.role === "teacher" ? "/teacher" : "/student");
     } catch (e: any) {
-      setError(e.message);
+      toast.error(e.message);
     }
   }
 
@@ -42,33 +54,27 @@ export default function Register() {
     <div style={{ maxWidth: 420, margin: "30px auto", padding: 16 }}>
       <h2>Inscription</h2>
 
-      {error && <p style={{ color: "crimson" }}>{error}</p>}
-
       <form onSubmit={submit}>
-        <input
-          placeholder="Nom (optionnel)"
+        <Input
+          placeholder="Nom d'utilisateur"
           value={name}
           onChange={(e) => setName(e.target.value)}
           style={{ width: "100%", marginBottom: 8 }}
         />
-
-        <input
-          placeholder="Adresse e-mail"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          style={{ width: "100%", marginBottom: 8 }}
-        />
-
-        <select
+        <Select
           value={role}
-          onChange={(e) => setRole(e.target.value as Role)}
-          style={{ width: "100%", marginBottom: 8 }}
+          onValueChange={(value) => setRole(value as Role)}
         >
-          <option value="student">Étudiant</option>
-          <option value="teacher">Enseignant</option>
-        </select>
-
-        <input
+          <SelectTrigger className="w-full mb-2">
+            <SelectValue placeholder="Choisir un rôle" />
+          </SelectTrigger>
+        
+          <SelectContent>
+            <SelectItem value="student">Étudiant</SelectItem>
+            <SelectItem value="teacher">Enseignant</SelectItem>
+          </SelectContent>
+        </Select>
+        <Input
           type="password"
           placeholder="Mot de passe (8 caractères min.)"
           value={password}
@@ -76,7 +82,7 @@ export default function Register() {
           style={{ width: "100%", marginBottom: 8 }}
         />
 
-        <input
+        <Input
           type="password"
           placeholder="Confirmer le mot de passe"
           value={confirm}
@@ -84,11 +90,11 @@ export default function Register() {
           style={{ width: "100%", marginBottom: 8 }}
         />
 
-        <button style={{ width: "100%" }}>Créer un compte</button>
+        <Button style={{ width: "100%" }}>Créer un compte</Button>
       </form>
 
       <p style={{ marginTop: 10 }}>
-        Déjà un compte ? <Link to="/login">Connexion</Link>
+        Déjà un compte ? <Link className="text-blue-500 dark:text-blue-300"to="/login">Connexion</Link>
       </p>
     </div>
   );

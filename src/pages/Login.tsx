@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { api } from "@/lib/api";
 import { saveAuth } from "@/lib/auth";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -14,7 +16,7 @@ export default function Login() {
     setError("");
 
     try {
-      const res = await api<{ token: string; user: any }>("/api/login", {
+      const res = await api<{ token: string; user: any }>("/login", {
         method: "POST",
         body: JSON.stringify({ email, password }),
       });
@@ -33,14 +35,14 @@ export default function Login() {
       {error && <p style={{ color: "crimson" }}>{error}</p>}
 
       <form onSubmit={submit}>
-        <input
+        <Input
           placeholder="Adresse e-mail"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           style={{ width: "100%", marginBottom: 8 }}
         />
 
-        <input
+        <Input
           type="password"
           placeholder="Mot de passe"
           value={password}
@@ -48,11 +50,11 @@ export default function Login() {
           style={{ width: "100%", marginBottom: 8 }}
         />
 
-        <button style={{ width: "100%" }}>Se connecter</button>
+        <Button>Se connecter</Button>
       </form>
 
       <p style={{ marginTop: 10 }}>
-        Pas encore de compte ? <Link to="/register">Inscription</Link>
+        Pas encore de compte ? <Link className="text-blue-500 dark:text-blue-300" to="/register">Inscription</Link>
       </p>
     </div>
   );

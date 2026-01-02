@@ -1,4 +1,4 @@
-import { type Course, courses } from "@/lib/course"
+import { type Course } from "@/lib/course"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -8,21 +8,26 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { useEffect, useState } from "react"
+import { api } from "@/lib/api"
+import { useNavigate } from "react-router-dom"
 
 function CourseCard({ course }: { course: Course }) {
+  const navigate = useNavigate()
+  const level = (course as any).level ?? "Beginner"
+  const tags = (course as any).tags || ["Programming"]
+  const creationDate = (course as any).created_at || (course as any).creationDate
+
   return (
     <Card className="w-full hover:shadow-lg transition-shadow">
       <CardHeader>
         <div className="flex items-center gap-2 mb-2">
           <span className={`text-xs px-2 py-1 rounded-full border ${
-            course.level === 'Beginner' ? 'bg-green-100 text-green-700 border-green-200' :
-            course.level === 'Intermediate' ? 'bg-yellow-100 text-yellow-700 border-yellow-200' :
+            level === 'Beginner' ? 'bg-green-100 text-green-700 border-green-200' :
+            level === 'Intermediate' ? 'bg-yellow-100 text-yellow-700 border-yellow-200' :
             'bg-red-100 text-red-700 border-red-200'
           }`}>
-            {course.level}
-          </span>
-          <span className="text-xs text-muted-foreground ml-auto">
-            {course.durationHours}h
+            {level}
           </span>
         </div>
         <CardTitle>{course.title}</CardTitle>
@@ -30,7 +35,7 @@ function CourseCard({ course }: { course: Course }) {
       </CardHeader>
       <CardContent>
         <div className="flex flex-wrap gap-2">
-          {course.tags.map((tag) => (
+          {tags.map((tag: string) => (
             <span key={tag} className="text-xs bg-secondary text-secondary-foreground px-2 py-1 rounded">
               {tag}
             </span>
@@ -39,15 +44,19 @@ function CourseCard({ course }: { course: Course }) {
       </CardContent>
       <CardFooter className="flex justify-between items-center mt-auto">
         <span className="text-xs text-muted-foreground">
-          {new Date(course.creationDate).toLocaleDateString()}
+          {creationDate ? new Date(creationDate).toLocaleDateString() : 'N/A'}
         </span>
-        <Button size="sm">Voir le cours</Button>
+        <Button size="sm" onClick={() => navigate(`/learn/${course.id}`)}>Voir le cours</Button>
       </CardFooter>
     </Card>
   )
 }
 
 export default function Courses() {
+  const [courses, setCourses] = useState<Course[]>([])
+  useEffect(() => {
+    api<Course[]>('/courses').then((res: any) => setCourses(res.courses)).catch(err => console.log(err))
+  }, [])
   return (
     <section className="container mx-auto py-10 px-4 md:px-6">
       <div className="flex flex-col gap-4 mb-8">

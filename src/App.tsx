@@ -1,15 +1,18 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./components/theme-provider";
 import { Navbar1 } from "./components/navbar1";
+import { Toaster } from "sonner";
 
 // --- kimo's PAGES ---
 import Home from "./pages/Home";
 import StudentDashboard from "./pages/StudentDashboard";
 import TeacherDashboard from "./pages/TeacherDashboard";
-import Lesson from "./pages/Lesson";
+import Learn from "./pages/Learn";
 import Courses from "./pages/Courses";
+import Quizzes from "./pages/Quizzes";
+import QuizDetail from "./pages/QuizDetail";
 
-// --- le petit ghali'S NEW PAGES ---
+// --- ghali'S PAGES ---
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import CourseDetail from "./pages/CourseDetail";
@@ -26,13 +29,15 @@ function App() {
               {/* Public Routes */}
               <Route path="/" element={<Home />} />
               <Route path="/courses" element={<Courses />} />
-              
+              <Route path="/quizzes" element={<Quizzes />} />
+              <Route path="/quiz/:id" element={<QuizDetail />} />
+
               {/* Dashboards */}
               <Route path="/student" element={<StudentDashboard />} />
               <Route path="/teacher" element={<TeacherDashboard />} />
-              
+
               {/* Learning Pages */}
-              <Route path="/lesson" element={<Lesson />} />
+              <Route path="/learn/:id" element={<Learn />} />
               <Route path="/course/:id" element={<CourseDetail />} />
 
               {/* Authentication */}
@@ -42,6 +47,7 @@ function App() {
           </div>
         </div>
       </BrowserRouter>
+      <Toaster />
     </ThemeProvider>
   )
 }
